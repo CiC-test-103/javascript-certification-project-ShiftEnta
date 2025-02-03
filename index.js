@@ -49,7 +49,7 @@ async function handleCommand(command) {
       // --------> WRITE YOUR CODE BELOW
 
       // Create a new student
-      let student = new Student(name, email, parseInt(year));
+      let student = new Student(name, email, parseInt(year), specialization);
       //? the add student to the  linkedlist
       studentManagementSystem.addStudent(student);
       console.log("Student added successfully!");
@@ -93,7 +93,6 @@ async function handleCommand(command) {
       console.log("Displaying students...");
       // --------> WRITE YOUR CODE BELOW
       //? Display all students
-      break;
       console.log(studentManagementSystem.displayStudents());
       // --------> WRITE YOUR CODE ABOVE
       break;

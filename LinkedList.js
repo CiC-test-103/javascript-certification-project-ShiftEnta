@@ -1,5 +1,6 @@
 // Necessary Imports (you will need to use this)
 const { Student } = require("./Student");
+const fs = require("fs").promises;
 
 /**
  * Node Class (GIVEN, you will need to use this)
@@ -215,7 +216,7 @@ class LinkedList {
 
     //?filter the sorted student array by
     return sortedStudents.filter((student) => {
-      student.age >= MinYear;
+      student.age >= minYear;
     });
   }
 
