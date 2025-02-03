@@ -1,13 +1,13 @@
 // Necessary Imports (you will need to use this)
-const { Student } = require('./Student')
+const { Student } = require("./Student");
 
 /**
  * Node Class (GIVEN, you will need to use this)
  */
 class Node {
   // Public Fields
-  data               // Student
-  next               // Object
+  data; // Student
+  next; // Object
   /**
    * REQUIRES:  The fields specified above
    * EFFECTS:   Creates a new Node instance
@@ -15,7 +15,7 @@ class Node {
    */
   constructor(data, next = null) {
     this.data = data;
-    this.next = next
+    this.next = next;
   }
 }
 
@@ -26,9 +26,9 @@ class Node {
  */
 class LinkedList {
   // Public Fields
-  head              // Object
-  tail              // Object
-  length            // Number representing size of LinkedList
+  head; // Object
+  tail; // Object
+  length; // Number representing size of LinkedList
 
   /**
    * REQUIRES:  None
@@ -37,6 +37,9 @@ class LinkedList {
    */
   constructor() {
     // TODO
+    this.head = null;
+    this.tail = null;
+    this.length = 0;
   }
 
   /**
@@ -49,6 +52,16 @@ class LinkedList {
    */
   addStudent(newStudent) {
     // TODO
+    let node = new Node(newStudent);
+    //? updating tail and head
+    if (!this.head) {
+      this.head = node;
+      this.tail = node;
+    } else {
+      this.tail.next = node; //?(to point to the next node)
+      this.tail = node; //? (to set the curent tail to node)
+    }
+    this.length++;
   }
 
   /**
@@ -61,6 +74,42 @@ class LinkedList {
    */
   removeStudent(email) {
     // TODO
+
+    //?check if the linkedlist is empty
+    if (!this.head) {
+      return;
+    }
+
+    //?if the node to remove is the head
+    if (this.head.data.email === email) {
+      //move the head to the next node
+      this.head = this.head.next;
+      if (!this.head) {
+        //?if the node had one element and its removed the tail has to be null
+        this.tail = null;
+        this.length--;
+        return;
+      }
+    }
+
+    //?loop through the list to find the node.data.email === email
+    let current = this.head;
+    //? looping to check if the next node has the same email
+    while (current.next) {
+      if (current.next.data.email === email) {
+        //? if it is the same email update the head.next to head.next.next
+        current.next = current.next.next;
+        //?if this.current.next === null when node is the tail
+        if (!current.next) {
+          //? set the tail to the previous node
+          this.tail = current;
+          this.length--;
+          return;
+        }
+      }
+      //? this set current to the next node to keep the loop going
+      current = current.next;
+    }
   }
 
   /**
@@ -69,8 +118,18 @@ class LinkedList {
    * RETURNS:   The Student or -1 if not found
    */
   findStudent(email) {
-    // TODO
-    return -1
+    //?loping so simlilar code as before but we start the loop from the head
+    let current = this.head;
+    while (current) {
+      if (current.data.email === email) {
+        return current.data;
+      }
+      //? to move to the next node
+      current = current.next;
+    }
+
+    //? return -1 if the student is not found
+    return -1;
   }
 
   /**
@@ -78,8 +137,12 @@ class LinkedList {
    * EFFECTS:   Clears all students from the Linked List
    * RETURNS:   None
    */
-  #clearStudents() {
+  clearStudents() {
     // TODO
+    //?reseting all the nodes to null
+    this.head = null;
+    this.tail = null;
+    this.length = 0;
   }
 
   /**
@@ -91,8 +154,17 @@ class LinkedList {
    *  - Output should appear as: "JohnDoe, JaneDoe"
    */
   displayStudents() {
+    //? an array to store names
+    let result = [];
+    //? loop through the nodes and push each node to the result array
+    let current = this.head;
+    while (current) {
+      result.push(current.data.name);
+      current = current.next; //? move to the next node
+    }
+
     // TODO
-    return "";
+    return result.join(", ");
   }
 
   /**
@@ -102,7 +174,14 @@ class LinkedList {
    */
   #sortStudentsByName() {
     // TODO
-    return [];
+    let students = [];
+    let curent = this.head;
+    while (curent) {
+      students.push(curent.data);
+      curent = curent.next;
+    }
+    //?sorts the arrayalphabetically
+    return students.sort((a, b) => a.name.localeCompare(b.name));
   }
 
   /**
@@ -114,7 +193,13 @@ class LinkedList {
    */
   filterBySpecialization(specialization) {
     // TODO
-    return [];
+    const sortedStudents = this.#sortStudentsByName(); // Get sorted students
+    return sortedStudents.filter(
+      //callback function to filter the returned sorted array
+      (student) => {
+        student.specialization === specialization;
+      }
+    );
   }
 
   /**
@@ -124,9 +209,14 @@ class LinkedList {
    * CONSIDERATIONS:
    * - Use sortStudentsByName()
    */
-  filterByMinAge(minAge) {
+  filterByMinYear(minYear) {
     // TODO
-    return [];
+    let sortedStudents = this.#sortStudentsByName();
+
+    //?filter the sorted student array by
+    return sortedStudents.filter((student) => {
+      student.age >= MinYear;
+    });
   }
 
   /**
@@ -136,6 +226,15 @@ class LinkedList {
    */
   async saveToJson(fileName) {
     // TODO
+
+    const students = []; // Initialize an empty array to store student objects
+    let current = this.head; // Start at the head of the list
+    while (current) {
+      // Traverse the list
+      students.push(current.data); // Add the student object to the array
+      current = current.next; // Move to the next node
+    }
+    await fs.writeFile(fileName, JSON.stringify(students, null, 2)); // Write to JSON f
   }
 
   /**
@@ -147,8 +246,12 @@ class LinkedList {
    */
   async loadFromJSON(fileName) {
     // TODO
+    // Read the JSON file
+    const data = await fs.readFile(fileName, "utf-8");
+    const students = JSON.parse(data); //? push JSON data into an array
+    this.clearStudents(); // Clear the existing linked list
+    students.forEach((student) => this.addStudent(new Student(student))); // Add each student
   }
-
 }
 
-module.exports = { LinkedList }
+module.exports = { LinkedList };
