@@ -198,7 +198,7 @@ class LinkedList {
     return sortedStudents.filter(
       //callback function to filter the returned sorted array
       (student) => {
-        student.getSpecialization() === specialization;
+        return student.getSpecialization() === specialization;
       }
     );
   }
