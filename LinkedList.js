@@ -97,7 +97,7 @@ class LinkedList {
     let current = this.head;
     //? looping to check if the next node has the same email
     while (current.next) {
-      if (current.next.data.getEmail === email) {
+      if (current.next.data.getEmail() === email) {
         //? if it is the same email update the head.next to head.next.next
         current.next = current.next.next;
         //?if this.current.next === null when node is the tail
@@ -122,7 +122,7 @@ class LinkedList {
     //?loping so simlilar code as before but we start the loop from the head
     let current = this.head;
     while (current) {
-      if (current.data.getEmail === email) {
+      if (current.data.getEmail() === email) {
         return current.data;
       }
       //? to move to the next node
@@ -198,7 +198,7 @@ class LinkedList {
     return sortedStudents.filter(
       //callback function to filter the returned sorted array
       (student) => {
-        student.getSpecialization === specialization;
+        student.getSpecialization() === specialization;
       }
     );
   }
@@ -216,7 +216,7 @@ class LinkedList {
 
     //?filter the sorted student array by
     return sortedStudents.filter((student) => {
-      student.getYear >= minYear;
+      student.getYear() >= minYear;
     });
   }
 
@@ -232,7 +232,12 @@ class LinkedList {
     let current = this.head; // Start at the head of the list
     while (current) {
       // Traverse the list
-      students.push(current.data); // Add the student object to the array
+      students.push({
+        name: current.data.getName(),
+        year: current.data.getYear(),
+        email: current.data.getEmail(),
+        specialization: current.data.getSpecialization(),
+      }); // Add the student object to the array
       current = current.next; // Move to the next node
     }
     await fs.writeFile(fileName, JSON.stringify(students, null, 2)); // Write to JSON f
