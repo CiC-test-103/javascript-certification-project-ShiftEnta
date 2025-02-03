@@ -82,31 +82,31 @@ class LinkedList {
     }
 
     //?if the node to remove is the head
-    if (this.head.data.email === email) {
+    if (this.head.data.getEmail() === email) {
       //move the head to the next node
       this.head = this.head.next;
       if (!this.head) {
         //?if the node had one element and its removed the tail has to be null
         this.tail = null;
-        this.length--;
-        return;
       }
+      this.length--;
+      return;
     }
 
     //?loop through the list to find the node.data.email === email
     let current = this.head;
     //? looping to check if the next node has the same email
     while (current.next) {
-      if (current.next.data.email === email) {
+      if (current.next.data.getEmail === email) {
         //? if it is the same email update the head.next to head.next.next
         current.next = current.next.next;
         //?if this.current.next === null when node is the tail
         if (!current.next) {
           //? set the tail to the previous node
           this.tail = current;
-          this.length--;
-          return;
         }
+        this.length--;
+        return;
       }
       //? this set current to the next node to keep the loop going
       current = current.next;
@@ -122,7 +122,7 @@ class LinkedList {
     //?loping so simlilar code as before but we start the loop from the head
     let current = this.head;
     while (current) {
-      if (current.data.email === email) {
+      if (current.data.getEmail === email) {
         return current.data;
       }
       //? to move to the next node
@@ -160,7 +160,7 @@ class LinkedList {
     //? loop through the nodes and push each node to the result array
     let current = this.head;
     while (current) {
-      result.push(current.data.name);
+      result.push(current.data.getName());
       current = current.next; //? move to the next node
     }
 
@@ -182,7 +182,7 @@ class LinkedList {
       curent = curent.next;
     }
     //?sorts the arrayalphabetically
-    return students.sort((a, b) => a.name.localeCompare(b.name));
+    return students.sort((a, b) => a.getName().localeCompare(b.getName()));
   }
 
   /**
@@ -194,11 +194,11 @@ class LinkedList {
    */
   filterBySpecialization(specialization) {
     // TODO
-    const sortedStudents = this.#sortStudentsByName(); // Get sorted students
+    let sortedStudents = this.#sortStudentsByName(); // Get sorted students
     return sortedStudents.filter(
       //callback function to filter the returned sorted array
       (student) => {
-        student.specialization === specialization;
+        student.getSpecialization === specialization;
       }
     );
   }
@@ -216,7 +216,7 @@ class LinkedList {
 
     //?filter the sorted student array by
     return sortedStudents.filter((student) => {
-      student.age >= minYear;
+      student.getYear >= minYear;
     });
   }
 
@@ -251,7 +251,16 @@ class LinkedList {
     const data = await fs.readFile(fileName, "utf-8");
     const students = JSON.parse(data); //? push JSON data into an array
     this.clearStudents(); // Clear the existing linked list
-    students.forEach((student) => this.addStudent(new Student(student))); // Add each student
+    students.forEach((student) =>
+      this.addStudent(
+        new Student(
+          student.name,
+          student.year,
+          student.email,
+          student.specialization
+        )
+      )
+    ); // Add each student
   }
 }
 
